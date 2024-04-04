@@ -1,0 +1,66 @@
+<!-- background image -->
+<div
+  class="h-screen w-screen bg-[url('assets/images/hero.jpg')] bg-cover bg-fixed bg-center bg-no-repeat">
+  <!-- dark overlay on background image -->
+  <div class="h-full w-full bg-black lg:bg-opacity-50">
+    <!-- navbar with logo -->
+    <nav class="px-12 py-5">
+      <img src="assets/images/logo.png" alt="logo" class="h-12" />
+    </nav>
+    <!-- login form -->
+    <div class="flex justify-center">
+      <!-- form container with input fields -->
+      <div
+        class="mt-2 w-full self-center rounded-md bg-black bg-opacity-70 px-16 py-16 lg:w-2/5 lg:max-w-md">
+        <!-- login title -->
+
+        <h2 class="mb-8 text-4xl font-semibold text-white">
+          @if (variant() === "login") {
+            Sign In
+          } @else {
+            Register
+          }
+        </h2>
+        <!-- input fields -->
+        <div class="flex flex-col gap-4">
+          <!-- email input -->
+          <app-input
+            id="email"
+            label="Email"
+            type="email"
+            [(value)]="email"></app-input>
+          <!-- password input -->
+          <app-input
+            id="password"
+            label="Password"
+            type="password"
+            [(value)]="password"></app-input>
+        </div>
+        <button
+          class="mt-10 w-full rounded-md bg-red-600 py-3 text-white transition-all hover:bg-red-700">
+          @if (variant() === "login") {
+            Sign In
+          } @else {
+            Sign Up
+          }
+        </button>
+        <p class="mt-12 text-neutral-500">
+          @if (variant() === "login") {
+            First time using Netflix?
+          } @else {
+            Already have an account?
+          }
+          <span
+            (click)="toggleVariant()"
+            class="ml-1 cursor-pointer select-none text-white hover:underline">
+            @if (variant() === "login") {
+              Create an account
+            } @else {
+              Sign In
+            }
+          </span>
+        </p>
+      </div>
+    </div>
+  </div>
+</div>

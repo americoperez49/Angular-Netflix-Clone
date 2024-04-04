@@ -1,0 +1,21 @@
+<div class="relative">
+  <input
+    [ngModel]="value()"
+    (ngModelChange)="value.set($event)"
+    [id]="id"
+    [type]="type"
+    class="peer z-10 block w-full appearance-none rounded-md bg-neutral-700 px-6 py-4 text-base text-white focus:outline-none focus:ring-0"
+    placeholder=""
+  />
+  <!-- <label
+    [for]="id"
+    class="absolute left-6 top-4 -translate-y-3 scale-75 transform text-base text-zinc-400 duration-150 peer-placeholder-shown:translate-y-0 peer-placeholder-shown:scale-100 peer-focus:-translate-y-3 peer-focus:scale-75"
+    >{{ label }}</label
+  > -->
+
+  <label
+    [for]="id"
+    class="pointer-events-none absolute left-6 top-4 -translate-y-3 select-none text-xs text-zinc-400 transition-all duration-150 peer-placeholder-shown:translate-x-0 peer-placeholder-shown:translate-y-0 peer-placeholder-shown:text-base peer-placeholder-shown:text-zinc-200 peer-focus:-translate-y-3 peer-focus:text-xs peer-focus:text-zinc-400"
+    >{{ label }}</label
+  >
+</div>
