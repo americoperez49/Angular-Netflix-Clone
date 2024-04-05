@@ -23,12 +23,27 @@
         </h2>
         <!-- input fields -->
         <div class="flex flex-col gap-4">
+          @if (variant() === "register") {
+            <!-- first name input -->
+            <app-input
+              id="firstName"
+              label="First Name"
+              type="text"
+              [(value)]="firstName"></app-input>
+            <!-- last name input -->
+            <app-input
+              id="lastname"
+              label="Last Name"
+              type="text"
+              [(value)]="lastName"></app-input>
+          }
           <!-- email input -->
           <app-input
             id="email"
             label="Email"
             type="email"
             [(value)]="email"></app-input>
+
           <!-- password input -->
           <app-input
             id="password"
@@ -36,14 +51,20 @@
             type="password"
             [(value)]="password"></app-input>
         </div>
-        <button
-          class="mt-10 w-full rounded-md bg-red-600 py-3 text-white transition-all hover:bg-red-700">
-          @if (variant() === "login") {
+        @if (variant() === "login") {
+          <button
+            (click)="signIn()"
+            class="mt-10 w-full rounded-md bg-red-600 py-3 text-white transition-all hover:bg-red-700">
             Sign In
-          } @else {
+          </button>
+        } @else {
+          <button
+            (click)="signUp()"
+            class="mt-10 w-full rounded-md bg-red-600 py-3 text-white transition-all hover:bg-red-700">
             Sign Up
-          }
-        </button>
+          </button>
+        }
+
         <p class="mt-12 text-neutral-500">
           @if (variant() === "login") {
             First time using Netflix?

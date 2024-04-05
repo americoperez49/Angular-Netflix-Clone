@@ -40,49 +40,55 @@ export type Database = {
           duration: string | null
           genre: string | null
           id: number
-          thumbnailUrl: string | null
+          thumbnailurl: string | null
           title: string | null
-          videoUrl: string | null
+          videourl: string | null
         }
         Insert: {
           description?: string | null
           duration?: string | null
           genre?: string | null
           id?: number
-          thumbnailUrl?: string | null
+          thumbnailurl?: string | null
           title?: string | null
-          videoUrl?: string | null
+          videourl?: string | null
         }
         Update: {
           description?: string | null
           duration?: string | null
           genre?: string | null
           id?: number
-          thumbnailUrl?: string | null
+          thumbnailurl?: string | null
           title?: string | null
-          videoUrl?: string | null
+          videourl?: string | null
         }
         Relationships: []
       }
       users: {
         Row: {
           email: string | null
+          first_name: string | null
           id: string
+          last_name: string | null
           updated_at: string | null
         }
         Insert: {
           email?: string | null
+          first_name?: string | null
           id: string
+          last_name?: string | null
           updated_at?: string | null
         }
         Update: {
           email?: string | null
+          first_name?: string | null
           id?: string
+          last_name?: string | null
           updated_at?: string | null
         }
         Relationships: [
           {
-            foreignKeyName: "profiles_id_fkey"
+            foreignKeyName: "users_id_fkey"
             columns: ["id"]
             isOneToOne: true
             referencedRelation: "users"

@@ -1,5 +1,8 @@
-import { Component, WritableSignal, signal } from '@angular/core';
+import { Component, WritableSignal, signal, NgZone } from '@angular/core';
 import { InputComponent } from '../input/input.component';
+import { SupabaseService } from '../../services/supabase.service';
+import { Router } from '@angular/router';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-auth',
@@ -11,8 +14,28 @@ import { InputComponent } from '../input/input.component';
 export class AuthComponent {
   email: string = '';
   password: string = '';
+  firstName: string = '';
+  lastName: string = '';
 
   variant: WritableSignal<string> = signal('login');
+
+  currentUserSubscription: Subscription | undefined;
+
+  constructor(
+    private router: Router,
+    private supabaseService: SupabaseService,
+    private ngZone: NgZone,
+  ) {
+    this.currentUserSubscription = this.supabaseService.currenUser.subscribe(
+      (user) => {
+        if (user) {
+          this.ngZone.run(() => {
+            this.router.navigate(['/home']);
+          });
+        }
+      },
+    );
+  }
 
   toggleVariant(): void {
     if (this.variant() === 'login') {
@@ -22,5 +45,20 @@ export class AuthComponent {
     }
   }
 
-  constructor() {}
+  signIn(): void {
+    this.supabaseService.signInWithEmail(this.email, this.password);
+  }
+
+  signUp(): void {
+    this.supabaseService.signUpNewUser(
+      this.email,
+      this.password,
+      this.firstName,
+      this.lastName,
+    );
+  }
+
+  ngOnDestroy(): void {
+    this.currentUserSubscription?.unsubscribe();
+  }
 }

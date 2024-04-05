@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { Router } from '@angular/router';
 import {
   AuthChangeEvent,
   AuthSession,
@@ -9,6 +10,7 @@ import {
 } from '@supabase/supabase-js';
 import { environment } from '../../environments/environment';
 import { Database } from '../../types/supabase';
+import { BehaviorSubject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -16,16 +18,39 @@ import { Database } from '../../types/supabase';
 export class SupabaseService {
   private supabase: SupabaseClient;
   _session: AuthSession | null = null;
+  _currenUser: BehaviorSubject<boolean | User | any> = new BehaviorSubject(
+    null,
+  );
 
-  constructor() {
+  constructor(private router: Router) {
     this.supabase = createClient<Database>(
       environment.supabaseUrl,
       environment.supabaseKey,
     );
 
+    // this.supabase.auth.getUser().then(({ data }) => {
+    //   if (data.user) {
+    //     this._currenUser.next(data.user);
+    //   } else {
+    //     this._currenUser.next(false);
+    //     this.router.navigate(['/auth']);
+    //   }
+    // });
+
+    // this.supabase.auth.getSession().then(({ data }) => {
+    //   this._session = data.session;
+    // });
+
     this.supabase.auth.onAuthStateChange((event, session) => {
       console.log(session);
       console.log(event);
+
+      if (event == 'SIGNED_IN' || event == 'INITIAL_SESSION') {
+        this._currenUser.next(session?.user);
+      } else {
+        this._currenUser.next(false);
+        this.router.navigate(['']);
+      }
     });
   }
 
@@ -36,6 +61,10 @@ export class SupabaseService {
     return this._session;
   }
 
+  get currenUser() {
+    return this._currenUser.asObservable();
+  }
+
   // user(user: User) {
   //   return this.supabase
   //     .from('profiles')
@@ -44,14 +73,25 @@ export class SupabaseService {
   //     .single();
   // }
 
-  async signUpNewUser(email: string, password: string) {
+  async signUpNewUser(
+    email: string,
+    password: string,
+    firstName: string,
+    lastName: string,
+  ) {
     const { data, error } = await this.supabase.auth.signUp({
       email: email,
       password: password,
       options: {
         emailRedirectTo: 'http://localhost:4200/',
+        data: {
+          firstName: firstName,
+          lastName: lastName,
+        },
       },
     });
+
+    console.log(data, error);
   }
 
   async signInWithEmail(email: string, password: string) {
@@ -59,6 +99,8 @@ export class SupabaseService {
       email: email,
       password: password,
     });
+
+    console.log(data, error);
   }
 
   async signOut() {
