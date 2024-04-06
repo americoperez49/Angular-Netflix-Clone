@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, WritableSignal, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import {
   AuthChangeEvent,
@@ -18,9 +18,7 @@ import { BehaviorSubject } from 'rxjs';
 export class SupabaseService {
   private supabase: SupabaseClient;
   _session: AuthSession | null = null;
-  _currenUser: BehaviorSubject<boolean | User | any> = new BehaviorSubject(
-    null,
-  );
+  currentUser: WritableSignal<boolean | User | any> = signal(null);
 
   constructor(private router: Router) {
     this.supabase = createClient<Database>(
@@ -28,28 +26,12 @@ export class SupabaseService {
       environment.supabaseKey,
     );
 
-    // this.supabase.auth.getUser().then(({ data }) => {
-    //   if (data.user) {
-    //     this._currenUser.next(data.user);
-    //   } else {
-    //     this._currenUser.next(false);
-    //     this.router.navigate(['/auth']);
-    //   }
-    // });
-
-    // this.supabase.auth.getSession().then(({ data }) => {
-    //   this._session = data.session;
-    // });
-
     this.supabase.auth.onAuthStateChange((event, session) => {
-      console.log(session);
-      console.log(event);
-
       if (event == 'SIGNED_IN' || event == 'INITIAL_SESSION') {
-        this._currenUser.next(session?.user);
+        this.currentUser.set(session?.user);
       } else {
-        this._currenUser.next(false);
-        this.router.navigate(['']);
+        this.currentUser.set(false);
+        this.router.navigateByUrl('', { replaceUrl: true });
       }
     });
   }
@@ -59,10 +41,6 @@ export class SupabaseService {
       this._session = data.session;
     });
     return this._session;
-  }
-
-  get currenUser() {
-    return this._currenUser.asObservable();
   }
 
   // user(user: User) {
@@ -91,7 +69,7 @@ export class SupabaseService {
       },
     });
 
-    console.log(data, error);
+    console.log({ data, error });
   }
 
   async signInWithEmail(email: string, password: string) {
@@ -100,7 +78,7 @@ export class SupabaseService {
       password: password,
     });
 
-    console.log(data, error);
+    console.log({ data, error });
   }
 
   async signOut() {

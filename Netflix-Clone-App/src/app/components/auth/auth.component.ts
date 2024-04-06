@@ -1,8 +1,7 @@
-import { Component, WritableSignal, signal, NgZone } from '@angular/core';
+import { Component, WritableSignal, signal, effect } from '@angular/core';
 import { InputComponent } from '../input/input.component';
 import { SupabaseService } from '../../services/supabase.service';
 import { Router } from '@angular/router';
-import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-auth',
@@ -18,23 +17,15 @@ export class AuthComponent {
   lastName: string = '';
 
   variant: WritableSignal<string> = signal('login');
-
-  currentUserSubscription: Subscription | undefined;
-
   constructor(
     private router: Router,
     private supabaseService: SupabaseService,
-    private ngZone: NgZone,
   ) {
-    this.currentUserSubscription = this.supabaseService.currenUser.subscribe(
-      (user) => {
-        if (user) {
-          this.ngZone.run(() => {
-            this.router.navigate(['/home']);
-          });
-        }
-      },
-    );
+    effect(() => {
+      if (this.supabaseService.currentUser()) {
+        this.router.navigateByUrl('/profiles', { replaceUrl: true });
+      }
+    });
   }
 
   toggleVariant(): void {
@@ -56,9 +47,5 @@ export class AuthComponent {
       this.firstName,
       this.lastName,
     );
-  }
-
-  ngOnDestroy(): void {
-    this.currentUserSubscription?.unsubscribe();
   }
 }
