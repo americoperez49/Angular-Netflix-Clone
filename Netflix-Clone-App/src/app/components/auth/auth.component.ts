@@ -1,8 +1,14 @@
-import { Component, WritableSignal, signal, NgZone } from '@angular/core';
+import {
+  Component,
+  WritableSignal,
+  signal,
+  Signal,
+  effect,
+} from '@angular/core';
 import { InputComponent } from '../input/input.component';
 import { SupabaseService } from '../../services/supabase.service';
 import { Router } from '@angular/router';
-import { Subscription } from 'rxjs';
+import { User } from '@supabase/supabase-js';
 
 @Component({
   selector: 'app-auth',
@@ -19,22 +25,25 @@ export class AuthComponent {
 
   variant: WritableSignal<string> = signal('login');
 
-  currentUserSubscription: Subscription | undefined;
+  currentUser: Signal<boolean | User | any> = signal(null);
+  // canEnter;
 
   constructor(
     private router: Router,
     private supabaseService: SupabaseService,
-    private ngZone: NgZone,
   ) {
-    this.currentUserSubscription = this.supabaseService.currenUser.subscribe(
-      (user) => {
-        if (user) {
-          this.ngZone.run(() => {
-            this.router.navigate(['/home']);
-          });
-        }
-      },
-    );
+    // this.canEnter = effect(() => {
+    //   if (this.currentUser()) {
+    //     this.router.routerState.snapshot.url;
+    //     this.router.navigate(['/home'], { replaceUrl: true });
+    //   }
+    // });
+  }
+
+  ngOnInit() {
+    if (this.supabaseService.currentUser()) {
+      this.router.navigate(['/home'], { replaceUrl: true });
+    }
   }
 
   toggleVariant(): void {
@@ -45,8 +54,12 @@ export class AuthComponent {
     }
   }
 
-  signIn(): void {
-    this.supabaseService.signInWithEmail(this.email, this.password);
+  async signIn(): Promise<void> {
+    await this.supabaseService.signInWithEmail(this.email, this.password);
+    if (this.currentUser()) {
+      this.router.navigate(['/home'], { replaceUrl: true });
+    }
+    console.log();
   }
 
   signUp(): void {
@@ -56,9 +69,5 @@ export class AuthComponent {
       this.firstName,
       this.lastName,
     );
-  }
-
-  ngOnDestroy(): void {
-    this.currentUserSubscription?.unsubscribe();
   }
 }

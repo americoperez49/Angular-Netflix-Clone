@@ -1,16 +1,13 @@
-import { Injectable } from '@angular/core';
+import { Injectable, WritableSignal, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import {
-  AuthChangeEvent,
   AuthSession,
   createClient,
-  Session,
   SupabaseClient,
   User,
 } from '@supabase/supabase-js';
 import { environment } from '../../environments/environment';
 import { Database } from '../../types/supabase';
-import { BehaviorSubject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -18,9 +15,7 @@ import { BehaviorSubject } from 'rxjs';
 export class SupabaseService {
   private supabase: SupabaseClient;
   _session: AuthSession | null = null;
-  _currenUser: BehaviorSubject<boolean | User | any> = new BehaviorSubject(
-    null,
-  );
+  currentUser: WritableSignal<boolean | User | any> = signal(null);
 
   constructor(private router: Router) {
     this.supabase = createClient<Database>(
@@ -28,28 +23,15 @@ export class SupabaseService {
       environment.supabaseKey,
     );
 
-    // this.supabase.auth.getUser().then(({ data }) => {
-    //   if (data.user) {
-    //     this._currenUser.next(data.user);
-    //   } else {
-    //     this._currenUser.next(false);
-    //     this.router.navigate(['/auth']);
-    //   }
-    // });
-
-    // this.supabase.auth.getSession().then(({ data }) => {
-    //   this._session = data.session;
-    // });
-
     this.supabase.auth.onAuthStateChange((event, session) => {
-      console.log(session);
-      console.log(event);
+      // console.log('session', session);
+      // console.log('event', event);
 
       if (event == 'SIGNED_IN' || event == 'INITIAL_SESSION') {
-        this._currenUser.next(session?.user);
+        this.currentUser.set(session?.user);
       } else {
-        this._currenUser.next(false);
-        this.router.navigate(['']);
+        this.currentUser.set(false);
+        this.router.navigate([''], { replaceUrl: true });
       }
     });
   }
@@ -57,22 +39,10 @@ export class SupabaseService {
   get session() {
     this.supabase.auth.getSession().then(({ data }) => {
       this._session = data.session;
+      console.log('_session', this._session);
     });
     return this._session;
   }
-
-  get currenUser() {
-    return this._currenUser.asObservable();
-  }
-
-  // user(user: User) {
-  //   return this.supabase
-  //     .from('profiles')
-  //     .select(`username, website, avatar_url`)
-  //     .eq('id', user.id)
-  //     .single();
-  // }
-
   async signUpNewUser(
     email: string,
     password: string,
