@@ -92,7 +92,23 @@ export class SupabaseService {
     const { data, error } = await this.supabase.rpc('get_billboard_movie');
     if (error) throw error;
 
-    const billboardMovie: Tables<'movies'> | null | undefined = data;
+    let billboardMovie: Tables<'movies'> | null | undefined = data;
+    if (billboardMovie) {
+      const response1 = await this.supabase.storage
+        .from('thumbnails')
+        .createSignedUrl(billboardMovie?.id + '.png', 3600);
+      if (response1.error) throw response1.error;
+      billboardMovie.thumbnailUrl = response1.data?.signedUrl;
+
+      const response2 = await this.supabase.storage
+        .from('movies')
+        .createSignedUrl(
+          billboardMovie?.id + '.mp4',
+          parseInt(billboardMovie?.duration as string) * 60,
+        );
+      if (response2.error) throw response2.error;
+      billboardMovie.videoUrl = response2.data?.signedUrl;
+    }
     return billboardMovie;
   }
 
@@ -100,6 +116,24 @@ export class SupabaseService {
     const { data, error } = await this.supabase.rpc('get_movies');
     if (error) throw error;
     const movies: Tables<'movies'>[] | [] = data || [];
+    if (movies) {
+      for (const movie of movies) {
+        const response1 = await this.supabase.storage
+          .from('thumbnails')
+          .createSignedUrl(movie?.id + '.png', 3600);
+        if (response1.error) throw response1.error;
+        movie.thumbnailUrl = response1.data?.signedUrl;
+
+        // const response2 = await this.supabase.storage
+        //   .from('movies')
+        //   .createSignedUrl(
+        //     movie?.id + '.mp4',
+        //     parseInt(movie?.duration as string) * 60,
+        //   );
+        // if (response2.error) throw response2.error;
+        // movie.videoUrl = response2.data?.signedUrl;
+      }
+    }
     this.allMovies.set(movies);
     return movies;
   }
