@@ -40,29 +40,59 @@ export type Database = {
           duration: string | null
           genre: string | null
           id: number
-          thumbnailurl: string | null
+          thumbnailUrl: string | null
           title: string | null
-          videourl: string | null
+          videoUrl: string | null
         }
         Insert: {
           description?: string | null
           duration?: string | null
           genre?: string | null
           id?: number
-          thumbnailurl?: string | null
+          thumbnailUrl?: string | null
           title?: string | null
-          videourl?: string | null
+          videoUrl?: string | null
         }
         Update: {
           description?: string | null
           duration?: string | null
           genre?: string | null
           id?: number
-          thumbnailurl?: string | null
+          thumbnailUrl?: string | null
           title?: string | null
-          videourl?: string | null
+          videoUrl?: string | null
         }
         Relationships: []
+      }
+      user_favorite_movies: {
+        Row: {
+          movie_id: number
+          user_id: string
+        }
+        Insert: {
+          movie_id: number
+          user_id: string
+        }
+        Update: {
+          movie_id?: number
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "public_user_favorite_movies_movie_id_fkey"
+            columns: ["movie_id"]
+            isOneToOne: false
+            referencedRelation: "movies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "public_user_favorite_movies_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       users: {
         Row: {
@@ -101,7 +131,34 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      get_billboard_movie: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          description: string | null
+          duration: string | null
+          genre: string | null
+          id: number
+          thumbnailUrl: string | null
+          title: string | null
+          videoUrl: string | null
+        }
+      }
+      get_movies: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          description: string | null
+          duration: string | null
+          genre: string | null
+          id: number
+          thumbnailUrl: string | null
+          title: string | null
+          videoUrl: string | null
+        }[]
+      }
+      get_users_favorite_movies: {
+        Args: Record<PropertyKey, never>
+        Returns: number[]
+      }
     }
     Enums: {
       [_ in never]: never

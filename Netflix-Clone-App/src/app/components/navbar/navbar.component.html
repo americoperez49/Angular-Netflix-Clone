@@ -1,0 +1,90 @@
+<!-- <nav class="fixed z-40 w-screen">
+  <div
+    class="flex flex-row items-center bg-zinc-900 bg-opacity-90 px-4 py-6 transition duration-500 md:px-16">
+    <img class="h-4 lg:h-7" src="assets/images/logo.png" alt="logo" />
+    <div class="ml-8 hidden flex-row gap-7 lg:flex">
+      <app-navbar-item label="Home"></app-navbar-item>
+      <app-navbar-item label="Series"></app-navbar-item>
+      <app-navbar-item label="Films"></app-navbar-item>
+      <app-navbar-item label="New & Popular"></app-navbar-item>
+      <app-navbar-item label="My List"></app-navbar-item>
+      <app-navbar-item label="Browse by Languages"></app-navbar-item>
+    </div>
+    <div
+      (click)="toggleMobileMenu()"
+      class="relative ml-8 flex cursor-pointer flex-row items-center gap-2 lg:hidden">
+      <p class="text-sm text-white">Browse</p>
+      <ng-icon
+        name="matExpandMoreRound"
+        class="text-white transition"></ng-icon>
+      <app-mobile-menu [visible]="showMobileMenu"></app-mobile-menu>
+    </div>
+    <div class="ml-auto flex flex-row items-center gap-7">
+      <div class="cursor-pointer text-gray-200 transition hover:text-gray-300">
+        <ng-icon name="matSearchRound" class="text-white transition"></ng-icon>
+      </div>
+      <div class="cursor-pointer text-gray-200 transition hover:text-gray-300">
+        <ng-icon
+          name="matNotificationsOutline"
+          class="text-white transition"></ng-icon>
+      </div>
+      <div class="relative flex cursor-pointer flex-row items-center gap-2">
+        <div class="h-6 w-6 overflow-hidden rounded-md lg:h-10 lg:w-10">
+          <img src="assets/images/default-blue.png" alt="" />
+        </div>
+        <ng-icon
+          name="matExpandMoreRound"
+          class="text-white transition"></ng-icon>
+      </div>
+      <app-account-menu [visible]="showAccountMenu"></app-account-menu>
+    </div>
+  </div>
+</nav> -->
+
+<nav class="fixed z-40 w-full">
+  <div
+    class="flex flex-row items-center px-4 py-6 transition duration-500 md:px-16"
+    [ngClass]="showBackground() ? 'bg-zinc-900 bg-opacity-90' : ''">
+    <img src="assets/images/logo.png" class="h-4 lg:h-7" alt="Logo" />
+    <div class="ml-8 hidden flex-row gap-7 lg:flex">
+      <app-navbar-item label="Home" active></app-navbar-item>
+      <app-navbar-item label="Series"></app-navbar-item>
+      <app-navbar-item label="Films"></app-navbar-item>
+      <app-navbar-item label="New & Popular"></app-navbar-item>
+      <app-navbar-item label="My List"></app-navbar-item>
+      <app-navbar-item label="Browse by Languages"></app-navbar-item>
+    </div>
+    <div
+      (click)="toggleMobileMenu()"
+      class="relative ml-8 flex cursor-pointer flex-row items-center gap-2 lg:hidden">
+      <p class="text-sm text-white">Browse</p>
+      <ng-icon
+        name="matExpandMoreRound"
+        class="text-white transition"
+        [ngClass]="showMobileMenu() ? 'rotate-180' : 'rotate-0'"></ng-icon>
+      <app-mobile-menu [visible]="showMobileMenu"></app-mobile-menu>
+    </div>
+    <div class="ml-auto flex flex-row items-center gap-7">
+      <div class="cursor-pointer text-gray-200 transition hover:text-gray-300">
+        <ng-icon name="matSearchRound" class="text-white transition"></ng-icon>
+      </div>
+      <div class="cursor-pointer text-gray-200 transition hover:text-gray-300">
+        <ng-icon
+          name="matNotificationsOutline"
+          class="text-white transition"></ng-icon>
+      </div>
+      <div
+        (click)="toggleAccountMenu()"
+        class="relative flex cursor-pointer select-none flex-row items-center gap-2">
+        <div class="h-6 w-6 overflow-hidden rounded-md lg:h-10 lg:w-10">
+          <img src="assets/images/default-blue.png" alt="" />
+        </div>
+        <ng-icon
+          name="matExpandMoreRound"
+          class="text-white transition"
+          [ngClass]="showAccountMenu() ? 'rotate-180' : 'rotate-0'"></ng-icon>
+        <app-account-menu [visible]="showAccountMenu"></app-account-menu>
+      </div>
+    </div>
+  </div>
+</nav>

@@ -9,8 +9,8 @@ import {
   User,
 } from '@supabase/supabase-js';
 import { environment } from '../../environments/environment';
-import { Database } from '../../types/supabase';
-import { BehaviorSubject } from 'rxjs';
+import { Database, Tables } from '../../types/supabase';
+import { BehaviorSubject, single } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -19,6 +19,9 @@ export class SupabaseService {
   private supabase: SupabaseClient;
   _session: AuthSession | null = null;
   currentUser: WritableSignal<boolean | User | any> = signal(null);
+
+  allMovies: WritableSignal<Tables<'movies'>[] | []> = signal([]);
+  favoriteMovies: WritableSignal<number[] | []> = signal([]);
 
   constructor(private router: Router) {
     this.supabase = createClient<Database>(
@@ -83,6 +86,51 @@ export class SupabaseService {
 
   async signOut() {
     const { error } = await this.supabase.auth.signOut();
+  }
+
+  async getBillboardMovie() {
+    const { data, error } = await this.supabase.rpc('get_billboard_movie');
+    if (error) throw error;
+
+    const billboardMovie: Tables<'movies'> | null | undefined = data;
+    return billboardMovie;
+  }
+
+  async getAllMovies() {
+    const { data, error } = await this.supabase.rpc('get_movies');
+    if (error) throw error;
+    const movies: Tables<'movies'>[] | [] = data || [];
+    this.allMovies.set(movies);
+    return movies;
+  }
+
+  async getFavoriteMovies() {
+    const user: User = this.currentUser();
+    const { data, error } = await this.supabase.rpc(
+      'get_users_favorite_movies',
+    );
+    if (error) throw error;
+    const favoriteMovies: number[] = data || [];
+    this.favoriteMovies.set(favoriteMovies);
+    // return favoriteMovies;
+  }
+
+  async addToFavorites(movieId: number) {
+    const user: User = this.currentUser();
+    const { data, error } = await this.supabase
+      .from('user_favorite_movies')
+      .insert([{ user_id: user.id, movie_id: movieId }]);
+    await this.getFavoriteMovies();
+  }
+
+  async removeFromFavorites(movieId: number) {
+    const user: User = this.currentUser();
+    const { data, error } = await this.supabase
+      .from('user_favorite_movies')
+      .delete()
+      .eq('user_id', user.id)
+      .eq('movie_id', movieId);
+    await this.getFavoriteMovies();
   }
 
   // updateProfile(profile: Profile) {

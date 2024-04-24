@@ -1,0 +1,12 @@
+@if (data.length) {
+  <div class="mt-4 space-y-8 px-4 md:px-12">
+    <p class="mb-4 font-semibold text-white md:text-xl lg:text-2xl">
+      {{ title }}
+    </p>
+    <div class="grid grid-cols-4 gap-2">
+      @for (movie of data; track movie.id) {
+        <app-movie-card [data]="movie"></app-movie-card>
+      }
+    </div>
+  </div>
+}

@@ -1,0 +1,44 @@
+@if (!visible()) {
+} @else {
+  <!-- <div
+    class="absolute right-0 top-14 flex w-56 flex-col border-2 border-gray-800 bg-black py-5">
+    <div class="flex flex-col gap-3">
+      <div class="group/item flex w-full flex-row items-center gap-3 px-3">
+        <img
+          class="w-8 rounded-md"
+          src="assets/images/default-blue.png"
+          alt="" />
+        <p class="text-sm text-white group-hover/item:underline">UserName</p>
+      </div>
+      <hr class="border-1 my-4 h-px border-gray-600" />
+      <div class="px-3 text-center text-sm text-white hover:underline">
+        Sign-Out
+      </div>
+    </div>
+  </div> -->
+
+  <div
+    class="absolute right-0 top-14 flex w-56 flex-col border-2 border-gray-800 bg-black py-5">
+    <div class="flex flex-col gap-3">
+      <div class="group/item flex w-full flex-row items-center gap-3 px-3">
+        <img
+          class="w-8 rounded-md"
+          src="assets/images/default-blue.png"
+          alt="" />
+        <p class="text-sm text-white group-hover/item:underline">UserName</p>
+      </div>
+    </div>
+    <hr class="my-4 h-px border-0 bg-gray-600" />
+    <div
+      (click)="signOut()"
+      class="px-3 text-center text-sm text-white hover:underline">
+      Sign-out
+    </div>
+    <hr class="my-4 h-px border-0 bg-gray-600" />
+    <div
+      (click)="getFavoriteMovies()"
+      class="px-3 text-center text-sm text-white hover:underline">
+      Get Favorites
+    </div>
+  </div>
+}

@@ -1,6 +1,25 @@
-<h1 class="text-3xl font-bold underline">Hello, Netflix-Clone-App</h1>
+<!-- <h1 class="text-3xl font-bold underline">Hello, Netflix-Clone-App</h1>
+<h1>
+  Hello
+  {{
+    currentUser().user_metadata.firstName +
+      " " +
+      currentUser().user_metadata.lastName
+  }}
+</h1>
+<button
+  routerLink="/profiles"
+  class="mt-10 w-full rounded-md bg-red-600 py-3 text-white transition-all hover:bg-red-700">
+  profiles
+</button>
 <button
   (click)="logout()"
   class="mt-10 w-full rounded-md bg-red-600 py-3 text-white transition-all hover:bg-red-700">
   Logout
-</button>
+</button> -->
+<app-navbar></app-navbar>
+<app-billboard></app-billboard>
+<div class="pb-40">
+  <app-movie-list title="Trending Now" [data]="movies()"></app-movie-list>
+  <app-movie-list title="My List" [data]="favoriteMovies()"></app-movie-list>
+</div>
