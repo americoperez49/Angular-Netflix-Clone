@@ -12,14 +12,13 @@
     <div
       class="absolute z-10 w-full rounded-b-md bg-zinc-800 p-2 shadow-md transition lg:p-4">
       <div class="flex flex-row items-center gap-3">
-        <!-- Need to add this to the div below -->
-        <!-- (click)="{{()=>{}}}" -->
-        <div
-          class="flex h-6 w-6 cursor-pointer items-center justify-center rounded-full bg-white transition hover:bg-neutral-300 lg:h-10 lg:w-10">
+        <button
+          [routerLink]="['/watch', data.id]"
+          class="flex h-6 w-6 items-center justify-center rounded-full bg-white transition hover:bg-neutral-300 lg:h-10 lg:w-10">
           <ng-icon
             name="matPlayArrow"
             class="text-2xl text-black transition"></ng-icon>
-        </div>
+        </button>
         <app-favorite-button [movieId]="getMovieId()"></app-favorite-button>
       </div>
       <p class="mt-4 font-semibold text-green-400">

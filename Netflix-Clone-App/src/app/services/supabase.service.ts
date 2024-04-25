@@ -10,7 +10,6 @@ import {
 } from '@supabase/supabase-js';
 import { environment } from '../../environments/environment';
 import { Database, Tables } from '../../types/supabase';
-import { BehaviorSubject, single } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -22,7 +21,8 @@ export class SupabaseService {
 
   allMovies: WritableSignal<Tables<'movies'>[] | []> = signal([]);
   favoriteMovies: WritableSignal<number[] | []> = signal([]);
-
+  billboardMovie: WritableSignal<Tables<'movies'> | null | undefined> =
+    signal(null);
   constructor(private router: Router) {
     this.supabase = createClient<Database>(
       environment.supabaseUrl,
@@ -81,35 +81,52 @@ export class SupabaseService {
       password: password,
     });
 
-    console.log({ data, error });
+    // console.log({ data, error });
   }
 
   async signOut() {
     const { error } = await this.supabase.auth.signOut();
   }
 
+  async getLinkToWatchMovie(movieId: string) {
+    const { data, error } = await this.supabase.storage
+      .from('movies')
+      .createSignedUrl(movieId + '.mp4', 10);
+
+    if (error) throw error;
+
+    return data.signedUrl;
+  }
+
   async getBillboardMovie() {
     const { data, error } = await this.supabase.rpc('get_billboard_movie');
     if (error) throw error;
-
-    let billboardMovie: Tables<'movies'> | null | undefined = data;
-    if (billboardMovie) {
+    else {
+      this.billboardMovie.set(data);
       const response1 = await this.supabase.storage
         .from('thumbnails')
-        .createSignedUrl(billboardMovie?.id + '.png', 3600);
+        .createSignedUrl(this.billboardMovie()?.id + '.png', 3600);
       if (response1.error) throw response1.error;
-      billboardMovie.thumbnailUrl = response1.data?.signedUrl;
+
+      this.billboardMovie.update((billboardMovie) => {
+        if (billboardMovie) {
+          billboardMovie.thumbnailUrl = response1.data?.signedUrl;
+        }
+        return billboardMovie;
+      });
 
       const response2 = await this.supabase.storage
         .from('movies')
-        .createSignedUrl(
-          billboardMovie?.id + '.mp4',
-          parseInt(billboardMovie?.duration as string) * 60,
-        );
+        .createSignedUrl(this.billboardMovie()?.id + '.mp4', 10);
+
       if (response2.error) throw response2.error;
-      billboardMovie.videoUrl = response2.data?.signedUrl;
+      this.billboardMovie.update((billboardMovie) => {
+        if (billboardMovie) {
+          billboardMovie.videoUrl = response2.data?.signedUrl;
+        }
+        return billboardMovie;
+      });
     }
-    return billboardMovie;
   }
 
   async getAllMovies() {

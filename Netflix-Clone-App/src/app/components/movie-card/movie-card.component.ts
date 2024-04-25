@@ -3,10 +3,11 @@ import { Tables } from '../../../types/supabase';
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
 import { matPlayArrow } from '@ng-icons/material-icons/baseline';
 import { FavoriteButtonComponent } from '../favorite-button/favorite-button.component';
+import { RouterLink } from '@angular/router';
 @Component({
   selector: 'app-movie-card',
   standalone: true,
-  imports: [NgIconComponent, FavoriteButtonComponent],
+  imports: [RouterLink, NgIconComponent, FavoriteButtonComponent],
   templateUrl: './movie-card.component.html',
   styleUrl: './movie-card.component.css',
   providers: [
